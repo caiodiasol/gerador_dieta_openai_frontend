@@ -6,6 +6,7 @@ import { DietData } from "@/types/diet-data.types";
 import { Loader, Sparkles } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import { API_BASE_URL } from "@/lib/config";
 
 
 export function DietGenerator({ data }: { data: DietData }) {
@@ -24,7 +25,7 @@ export function DietGenerator({ data }: { data: DietData }) {
 
     try {
 
-      const response = await fetch("http://localhost:3333/plan", {
+      const response = await fetch(`${API_BASE_URL}/plan`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
