@@ -1,12 +1,12 @@
 // Configuração da API baseada no ambiente
 const getApiUrl = () => {
   // Em desenvolvimento, usa localhost
-  if (process.env.NODE_ENV === 'development') {
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
     return 'http://localhost:3333';
   }
   
   // Em produção, usa a URL do Render
-  return 'https://gerador-dieta-openai-backend.onrender.com';
+  return process.env.NEXT_PUBLIC_API_URL || 'https://gerador-dieta-openai-backend.onrender.com';
 };
 
 export const API_BASE_URL = getApiUrl();
