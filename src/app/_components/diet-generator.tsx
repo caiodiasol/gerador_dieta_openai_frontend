@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DietData } from "@/types/diet-data.types";
 import { Loader, Sparkles } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { API_BASE_URL } from "@/lib/config";
 
@@ -44,11 +44,22 @@ export function DietGenerator({ data }: { data: DietData }) {
         signal: controller.signal
       })
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: "Erro ao processar requisição" }));
+        setOutput(`\n\nErro: ${errorData.message || errorData.error || "Erro desconhecido"}\n\n`);
+        return;
+      }
+
       const reader = response.body?.getReader()
+      if (!reader) {
+        setOutput("\n\nErro: Não foi possível ler a resposta do servidor\n\n");
+        return;
+      }
+
       const decoder = new TextDecoder("utf-8")
 
       while (true) {
-        const { done, value } = await reader!.read()
+        const { done, value } = await reader.read()
         if (done) break;
 
         setOutput(prev => prev + decoder.decode(value))
@@ -89,7 +100,7 @@ export function DietGenerator({ data }: { data: DietData }) {
             size="lg"
             onClick={handleGenerate}
           >
-            {isStreaming ? <Loader className="animate-spin" /> : <Sparkles name="w-6 h-6" />}
+            {isStreaming ? <Loader className="animate-spin w-6 h-6" /> : <Sparkles className="w-6 h-6" />}
             {isStreaming ? "Parar dieta" : "Gerar dieta"}
           </Button>
         </div>
